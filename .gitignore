@@ -1,0 +1,12 @@
+# Build output
+out/
+build/
+*.class
+
+# Local IDE files
+.idea/
+*.iml
+
+# Runtime test data
+testcases.properties
+testcases.properties.tmp
