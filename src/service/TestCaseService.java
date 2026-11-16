@@ -3,13 +3,13 @@ package service;
 import model.TestCase;
 import model.ManualTestCase;
 import model.AutomatedTestCase;
-import model.TestStatus;
+import enums.TestStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class TestCaseManager {
+public class TestCaseService {
     private final List<TestCase> testCases = new ArrayList<>();
     private int nextId = 1;
 
@@ -107,48 +107,6 @@ public class TestCaseManager {
                     test.getStatus(),
                     test.getSpecificDetails());
         }
-    }
-
-    public void generateReport() {
-        int manual = 0;
-        int automated = 0;
-        int pass = 0;
-        int fail = 0;
-        int blocked = 0;
-        int notRun = 0;
-
-        for (TestCase test : testCases) {
-            if (test instanceof ManualTestCase) {
-                manual++;
-            } else if (test instanceof AutomatedTestCase) {
-                automated++;
-            }
-
-            switch (test.getStatus()) {
-                case PASS -> pass++;
-                case FAIL -> fail++;
-                case BLOCKED -> blocked++;
-                case NOT_RUN -> notRun++;
-            }
-        }
-
-        int total = testCases.size();
-        double passRate = total == 0 ? 0.0 : pass * 100.0 / total;
-
-        System.out.println("================================");
-        System.out.println("      TEST EXECUTION REPORT");
-        System.out.println("================================");
-        System.out.println("Total Test Cases : " + total);
-        System.out.println("  - Manual      : " + manual);
-        System.out.println("  - Automated   : " + automated);
-        System.out.println("--------------------------------");
-        System.out.println("PASS            : " + pass);
-        System.out.println("FAIL            : " + fail);
-        System.out.println("BLOCKED         : " + blocked);
-        System.out.println("NOT RUN         : " + notRun);
-        System.out.printf(
-                Locale.ROOT, "Pass Rate       : %.1f%%%n", passRate);
-        System.out.println("================================");
     }
 
     public void restoreTests(List<TestCase> loadedTests) {

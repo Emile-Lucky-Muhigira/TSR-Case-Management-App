@@ -1,5 +1,9 @@
 package model;
 
+import enums.TestType;
+import enums.TestStatus;
+import validation.InputValidator;
+
 public abstract class TestCase {
     private final int id;
     private final String title;
@@ -15,20 +19,11 @@ public abstract class TestCase {
             String preconditions,
             String expectedResult) {
 
-        if (title == null || title.trim().isEmpty()) {
-            throw new IllegalArgumentException("Title is required.");
-        }
-
-        if (expectedResult == null || expectedResult.trim().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Expected result is required.");
-        }
-
         this.id = id;
-        this.title = title.trim();
+        this.title = InputValidator.requireText(title, "Title");
         this.description = description == null ? "" : description;
         this.preconditions = preconditions == null ? "" : preconditions;
-        this.expectedResult = expectedResult.trim();
+        this.expectedResult = InputValidator.requireText(expectedResult, "Expected result");
         this.status = TestStatus.NOT_RUN;
     }
 
@@ -64,7 +59,7 @@ public abstract class TestCase {
         this.status = status;
     }
 
-    public abstract String getType();
+    public abstract TestType getType();
 
     public abstract String getSpecificDetails();
 }

@@ -1,4 +1,8 @@
-# TSR Case Management App
+# QA Tracker - Test Case Management App
+
+**Author:** [Emile Lucky Muhigira](https://github.com/Emile-Lucky-Muhigira)
+
+Java Programming Module 2 capstone project.
 
 A Java console application (QA Tracker v1.0) for recording manual and automated test cases, updating their results, searching tests, and displaying a test execution report.
 
@@ -24,7 +28,7 @@ Check Java, compile, and run from the project root:
 ```sh
 java -version
 javac -version
-javac -d out src/Main.java src/model/*.java src/service/*.java src/storage/*.java
+javac -d out src/Main.java src/model/*.java src/enums/*.java src/validation/*.java src/storage/*.java src/service/*.java
 java -cp out Main
 ```
 
@@ -46,7 +50,7 @@ Enter a menu number and press Enter:
 2. **View All Test Cases**: display ID, title, type, status, and tester name or script path.
 3. **Update Test Status**: enter an existing ID, then choose `1` PASS, `2` FAIL, `3` BLOCKED, or `4` NOT_RUN.
 4. **Search Test Cases**: search titles and descriptions without case sensitivity. An empty search shows all cases.
-5. **Generate Report**: display counts by type and status, plus pass rate. Pass rate is PASS / total cases × 100, including blocked and not-run cases in the denominator. An empty collection reports 0.0%.
+5. **Generate Report**: display counts by type and status, plus pass rate. Pass rate is PASS / total cases Ã— 100, including blocked and not-run cases in the denominator. An empty collection reports 0.0%.
 6. **Save & Exit**: save the current test cases and close the app.
 
 Automated cases store script paths only; the application does not execute scripts. Reports are printed in the console.
@@ -67,23 +71,69 @@ Runtime data, compiled output, and local IDE configuration are excluded from Git
 TSR-Case-Management-App/
 ├── README.md
 ├── .gitignore
+├── tests/
+│   └── test_assignment.py
 └── src/
-    ├── Main.java
     ├── model/
     │   ├── TestCase.java
     │   ├── ManualTestCase.java
-    │   ├── AutomatedTestCase.java
-    │   └── TestStatus.java
+    │   └── AutomatedTestCase.java
+    ├── enums/
+    │   ├── TestStatus.java
+    │   └── TestType.java
+    ├── validation/
+    │   └── InputValidator.java
+    ├── storage/
+    │   └── FileStorage.java
     ├── service/
-    │   └── TestCaseManager.java
-    └── storage/
-        └── FileStorage.java
+    │   ├── TestCaseService.java
+    │   └── ReportGenerator.java
+    └── Main.java
 ```
 
-- `Main.java`: console menu, input, and startup/shutdown flow.
-- `model`: test case fields, validation, manual/automated types, and status enum. Each class or enum has its own Java file.
-- `service`: collection management, IDs, search, status updates, and reporting.
-- `storage`: saving and loading using Java Properties and file I/O.
+The local folder can be named `QA_Tracker`; its name does not affect Java packages or execution. The GitHub repository retains its existing name.
+
+- **model**: abstract base class and separate manual/automated subclasses, with private fields and required-field validation.
+- **enums**: the allowed statuses and test types.
+- **validation**: reusable required-text, type, ID, and status-choice checks.
+- **storage**: UTF-8 file reading/writing and saved-record validation. Previous-version files using `Manual` and `Automated` type labels remain compatible.
+- **service**: collection operations in `TestCaseService`; report calculations and display in `ReportGenerator`.
+- **Main**: menu prompts, application startup, and coordinating operations.
+
+## Assignment verification
+
+Reviewed against `module_2_capstone.pdf` (Java Programming capstone). The implementation covers:
+
+- **Add**: all specified fields, unique automatic IDs, default NOT_RUN, distinct manual and automated classes, and type-specific fields.
+- **View**: formatted ID/title/type/status/type-specific details, with a message when empty.
+- **Update**: current status display, all four allowed statuses, and friendly errors for invalid or missing IDs.
+- **Search**: case-insensitive title/description matches, empty keyword returns all, and a message for no matches.
+- **Report**: total, type counts, all status counts, one-decimal pass rate, and safe zero-case reporting.
+- **Persistence**: Save & Exit, farewell message, automatic startup load, and restoration of every field including type and status.
+- **Validation**: all eight rules listed in the questionnaire; invalid menu choices, nonnumeric IDs, corrupt saved files, save failures, and closed input are also handled.
+- **Java concepts**: abstraction, inheritance, polymorphism, encapsulation, collections, enums, exception handling, and file I/O.
+
+The assignment also requires a **live terminal demonstration and code review**. The code and checks support these deliverables; the student/group still needs to perform the demonstration and explain the implementation.
+
+### Run the verification checks (optional)
+
+The app itself only needs Java. The development checks additionally require Python 3, using its standard library only:
+
+```sh
+python -m unittest discover -s tests -v
+```
+
+The suite compiles the Java sources into a temporary directory and runs 10 black-box checks covering the six features, validation, saved-field round trips, unique IDs after restart, compatibility with previous saved files, and file/input error handling. Test data is isolated from your own saved cases.
+
+### Suggested live demonstration
+
+1. Start without a saved file; show the empty view and zero report.
+2. Attempt an empty title and empty expected result; show rejection.
+3. Add one Manual case and one Automated case; show both in the list.
+4. Try an invalid type, nonexistent ID, and invalid status choice.
+5. Change one case to PASS; show a 50.0% pass rate for two total cases.
+6. Search by title, description, mixed case, empty keyword, and a nonmatching keyword.
+7. Choose Save & Exit, restart, and show the restored cases and statuses.
 
 ## Troubleshooting
 

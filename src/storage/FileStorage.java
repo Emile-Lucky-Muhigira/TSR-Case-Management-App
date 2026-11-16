@@ -3,7 +3,9 @@ package storage;
 import model.TestCase;
 import model.ManualTestCase;
 import model.AutomatedTestCase;
-import model.TestStatus;
+import enums.TestStatus;
+import enums.TestType;
+import validation.InputValidator;
 
 import java.io.File;
 import java.io.FileReader;
@@ -32,7 +34,7 @@ public class FileStorage {
             data.setProperty(prefix + "id",
                     String.valueOf(test.getId()));
             data.setProperty(prefix + "type",
-                    test.getType());
+                    test.getType().toString());
             data.setProperty(prefix + "title",
                     test.getTitle());
             data.setProperty(prefix + "description",
@@ -98,7 +100,7 @@ public class FileStorage {
                             "Invalid or duplicate test ID.");
                 }
 
-                String type = required(data, prefix + "type");
+                TestType type = InputValidator.parseType(required(data, prefix + "type"));
                 String title = required(data, prefix + "title");
                 String description =
                         required(data, prefix + "description");
@@ -111,11 +113,11 @@ public class FileStorage {
 
                 TestCase test;
 
-                if (type.equals("Manual")) {
+                if (type == TestType.MANUAL) {
                     test = new ManualTestCase(
                             id, title, description, preconditions,
                             expectedResult, details);
-                } else if (type.equals("Automated")) {
+                } else if (type == TestType.AUTOMATED) {
                     test = new AutomatedTestCase(
                             id, title, description, preconditions,
                             expectedResult, details);

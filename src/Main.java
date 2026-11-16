@@ -1,14 +1,18 @@
 import model.TestCase;
-import model.TestStatus;
-import service.TestCaseManager;
+import enums.TestStatus;
+import service.TestCaseService;
 import storage.FileStorage;
+import service.ReportGenerator;
+import enums.TestType;
+import validation.InputValidator;
+import java.util.NoSuchElementException;
 
 import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
-    private static final TestCaseManager manager = new TestCaseManager();
+    private static final TestCaseService manager = new TestCaseService();
     private static final FileStorage storage = new FileStorage();
 
     public static void main(String[] args) {
@@ -25,29 +29,34 @@ public class Main {
 
         boolean running = true;
 
-        while (running) {
-            displayMenu();
-            String choice = scanner.nextLine().trim();
+        try {
+            while (running) {
+                displayMenu();
+                String choice = scanner.nextLine().trim();
 
-            switch (choice) {
-                case "1" -> addTestCase();
-                case "2" -> manager.displayTests(manager.getAllTests());
-                case "3" -> updateTestStatus();
-                case "4" -> searchTestCases();
-                case "5" -> manager.generateReport();
-                case "6" -> {
-                    if (saveTests()) {
-                        running = false;
+                switch (choice) {
+                    case "1" -> addTestCase();
+                    case "2" -> manager.displayTests(manager.getAllTests());
+                    case "3" -> updateTestStatus();
+                    case "4" -> searchTestCases();
+                    case "5" -> new ReportGenerator().generateReport(manager.getAllTests());
+                    case "6" -> {
+                        if (saveTests()) {
+                            running = false;
+                        }
                     }
+                    default -> System.out.println(
+                            "Invalid choice. Enter a number from 1 to 6.");
                 }
-                default -> System.out.println(
-                        "Invalid choice. Enter a number from 1 to 6.");
+
+                System.out.println();
             }
 
-            System.out.println();
+        } catch (NoSuchElementException e) {
+            System.out.println("Input closed. Unsaved changes were not saved. Goodbye!");
+        } finally {
+            scanner.close();
         }
-
-        scanner.close();
     }
 
     private static void displayMenu() {
@@ -68,7 +77,7 @@ public class Main {
         System.out.print("Title: ");
         String title = scanner.nextLine();
 
-        if (title.trim().isEmpty()) {
+        if (InputValidator.isBlank(title)) {
             System.out.println("Title is required. Test case not created.");
             return;
         }
@@ -82,28 +91,25 @@ public class Main {
         System.out.print("Expected result: ");
         String expectedResult = scanner.nextLine();
 
-        if (expectedResult.trim().isEmpty()) {
+        if (InputValidator.isBlank(expectedResult)) {
             System.out.println(
                     "Expected result is required. Test case not created.");
             return;
         }
 
-        String type;
-
+        TestType type;
         while (true) {
             System.out.print("Type (Manual or Automated): ");
-            type = scanner.nextLine().trim();
-
-            if (type.equalsIgnoreCase("Manual")
-                    || type.equalsIgnoreCase("Automated")) {
+            try {
+                type = InputValidator.parseType(scanner.nextLine());
                 break;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
             }
-
-            System.out.println("Please enter Manual or Automated.");
         }
 
         try {
-            if (type.equalsIgnoreCase("Manual")) {
+            if (type == TestType.MANUAL) {
                 System.out.print("Tester name: ");
                 String testerName = scanner.nextLine();
 
@@ -131,8 +137,8 @@ public class Main {
         int id;
 
         try {
-            id = Integer.parseInt(scanner.nextLine().trim());
-        } catch (NumberFormatException e) {
+            id = InputValidator.parseId(scanner.nextLine());
+        } catch (IllegalArgumentException e) {
             System.out.println("Invalid ID. Please enter a whole number.");
             return;
         }
@@ -155,17 +161,11 @@ public class Main {
 
             String choice = scanner.nextLine().trim();
 
-            TestStatus status = switch (choice) {
-                case "1" -> TestStatus.PASS;
-                case "2" -> TestStatus.FAIL;
-                case "3" -> TestStatus.BLOCKED;
-                case "4" -> TestStatus.NOT_RUN;
-                default -> null;
-            };
-
-            if (status == null) {
-                System.out.println(
-                        "Invalid status choice. Enter a number from 1 to 4.");
+            TestStatus status;
+            try {
+                status = InputValidator.parseStatusChoice(choice);
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
                 continue;
             }
 

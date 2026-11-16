@@ -10,3 +10,7 @@ build/
 # Runtime test data
 testcases.properties
 testcases.properties.tmp
+
+# Python verification cache
+__pycache__/
+*.pyc

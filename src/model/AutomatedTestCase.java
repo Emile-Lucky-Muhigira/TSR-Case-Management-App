@@ -1,5 +1,7 @@
 package model;
 
+import enums.TestType;
+
 public class AutomatedTestCase extends TestCase {
     private final String scriptPath;
 
@@ -20,8 +22,8 @@ public class AutomatedTestCase extends TestCase {
     }
 
     @Override
-    public String getType() {
-        return "Automated";
+    public TestType getType() {
+        return TestType.AUTOMATED;
     }
 
     @Override
