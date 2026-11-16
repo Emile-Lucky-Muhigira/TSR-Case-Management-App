@@ -1,3 +1,5 @@
+package model;
+
 public class ManualTestCase extends TestCase {
     private final String testerName;
 

@@ -1,3 +1,5 @@
+package model;
+
 public class AutomatedTestCase extends TestCase {
     private final String scriptPath;
 

@@ -1,3 +1,8 @@
+import model.TestCase;
+import model.TestStatus;
+import service.TestCaseManager;
+import storage.FileStorage;
+
 import java.io.IOException;
 import java.util.Scanner;
 

@@ -1,3 +1,10 @@
+package service;
+
+import model.TestCase;
+import model.ManualTestCase;
+import model.AutomatedTestCase;
+import model.TestStatus;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;

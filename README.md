@@ -24,7 +24,7 @@ Check Java, compile, and run from the project root:
 ```sh
 java -version
 javac -version
-javac -d out src/*.java
+javac -d out src/Main.java src/model/*.java src/service/*.java src/storage/*.java
 java -cp out Main
 ```
 
@@ -63,16 +63,32 @@ Runtime data, compiled output, and local IDE configuration are excluded from Git
 
 ## Source structure
 
+```text
+TSR-Case-Management-App/
+├── README.md
+├── .gitignore
+└── src/
+    ├── Main.java
+    ├── model/
+    │   ├── TestCase.java
+    │   ├── ManualTestCase.java
+    │   ├── AutomatedTestCase.java
+    │   └── TestStatus.java
+    ├── service/
+    │   └── TestCaseManager.java
+    └── storage/
+        └── FileStorage.java
+```
+
 - `Main.java`: console menu, input, and startup/shutdown flow.
-- `TestCase.java`: abstract base class with shared fields and validation.
-- `ManualTestCase.java`: manual case and tester name.
-- `AutomatedTestCase.java`: automated case and script path.
-- `TestStatus.java`: PASS, FAIL, BLOCKED, and NOT_RUN enum.
-- `TestCaseManager.java`: collection, IDs, search, status updates, and reporting.
-- `FileStorage.java`: saving and loading with Java Properties and file I/O.
+- `model`: test case fields, validation, manual/automated types, and status enum. Each class or enum has its own Java file.
+- `service`: collection management, IDs, search, status updates, and reporting.
+- `storage`: saving and loading using Java Properties and file I/O.
 
 ## Troubleshooting
 
 - **java/javac not recognized**: install a JDK and add its `bin` directory to PATH, then reopen the terminal.
 - **Could not find or load main class Main**: run the compile command successfully, then run `java -cp out Main` from the project root.
 - **Saved tests appear missing**: check the working directory; the app reads its data file relative to that directory.
+
+

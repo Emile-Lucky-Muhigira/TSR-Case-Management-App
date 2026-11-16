@@ -1,3 +1,5 @@
+package model;
+
 public abstract class TestCase {
     private final int id;
     private final String title;
